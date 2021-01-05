@@ -186,10 +186,24 @@ public class backend {
         return printableMaze;
     }
     private static String[] printableMaze;
-    public static void setPrintableMaze(String[] PrintableMaze) {
-        backend.printableMaze = PrintableMaze;
+    public static void setPrintableMaze(String[] printableMaze) {
+        backend.printableMaze = printableMaze;
     }
     public static String[] getPrintableMaze() {
         return printableMaze;
+    }
+    private static String wallString;
+    public static void setWallString(String wallString) {
+        backend.wallString = wallString;
+    }
+    public static String getWallString() {
+        return wallString;
+    }
+    private static String emptyString;
+    public static void setEmptyString(String emptyString) {
+        backend.emptyString = emptyString;
+    }
+    public static String getEmptyString() {
+        return emptyString;
     }
 }
