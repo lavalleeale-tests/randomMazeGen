@@ -3,7 +3,7 @@ package com.axlav;
 public class Main {
     public static void main(String[] args) {
         int mazex = 50;
-        int mazey = 50;
+        int mazey = 100;
         if (args.length==2) {
             try {
                 mazex = Integer.parseInt(args[0]);
@@ -13,8 +13,8 @@ public class Main {
             }
         }
         boolean[][] maze = backend.genMaze(mazex, mazey);
-        boolean [][] initialSolution = backend.genInitialSolution(maze);
-        backend.setPrintableMaze(backend.genPrintableMaze(initialSolution));
-        GUI.start(mazex);
+        data.setInitialSolution(backend.genInitialSolution(maze));
+        GUI GUI = new GUI();
+        GUI.start();
     }
 }

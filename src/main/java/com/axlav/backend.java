@@ -6,8 +6,8 @@ import java.util.Random;
 public class backend {
     /**
      * Generates a <code>boolean[][]</code> with specified dimensions
-    * @Param x The height of the maze to be generated
-    * @Param y The width of the maze to be generated
+    * @param x The height of the maze to be generated
+    * @param y The width of the maze to be generated
     **/
     public static boolean[][] genMaze(int x, int y){
         boolean[][] maze = new boolean[x][y];
@@ -21,7 +21,7 @@ public class backend {
     }
     /**
      * Generates and set to <code>false</code> a path to solve any given <code>boolean[][]</code> maze
-     * @Param maze The maze to generate the solution from
+     * @param maze The maze to generate the solution from
      **/
     public static boolean[][] genInitialSolution(boolean[][] maze){
         int curx = 1;
@@ -64,9 +64,9 @@ public class backend {
     }
     /**
      * Checks if a point is valid to solve until the end of the maze
-     * @Param maze The maze to check for valid point in
-     * @Param x The x value of the initial point
-     * @Param x The y value of the initial point
+     * @param maze The maze to check for valid point in
+     * @param x The x value of the initial point
+     * @param y The y value of the initial point
      **/
     public static boolean validSpot(boolean[][] maze, int x, int y) {
         Object[][] tried = new Object[0][0];
@@ -132,9 +132,9 @@ public class backend {
     }
     /**
      * Checks if a point has only only one <code>false</code> directly next to it
-     * @Param maze The maze to check a valid point in
-     * @Param x The x value of the initial point
-     * @Param x The y value of the initial point
+     * @param maze The maze to check a valid point in
+     * @param x The x value of the initial point
+     * @param y The y value of the initial point
      **/
     public static boolean validSingleSpot(int x, int y, boolean[][] maze) {
         int emptyAdjacent = 0;
@@ -158,52 +158,39 @@ public class backend {
         } catch (ArrayIndexOutOfBoundsException ignored) {
             return false;
         }
-        if (emptyAdjacent!=1) {
-            return false;
-        } else return true;
+        return emptyAdjacent == 1;
     }
     /**
      * Takes a <code>boolean[][]</code> maze and outputs a <code>String[]</code> representation
-     * @Param maze The maze to make printable
+     * @param maze The maze to make printable
      * @return The <code>String[]</code> representation
      **/
-    public static String[] genPrintableMaze(boolean[][] maze) {
+    public static char[][] genCharMaze(boolean[][] maze, int playerX, int playerY) {
+        char[][] charMaze = new char[maze.length][];
+        char[] rowChars;
+        maze[maze.length-2][maze[0].length-1]= maze[maze.length-2][maze[0].length-2];
+        for (int x = 0; x < maze.length; x++) {
+            rowChars = new char[maze[x].length+1];
+            for (int y = 0; y < maze[x].length; y++) {
+                if (maze[x][y])     {
+                    rowChars[y] = 'x';
+                } else {
+                    rowChars[y] = 'o';
+                }
+            }
+            rowChars[maze[x].length]  = '\n';
+            charMaze[x] = rowChars;
+        }
+        charMaze[playerX][playerY] = 'X';
+        return charMaze;
+    }
+    public static String[] genPrintableMaze(char[][] maze) {
         String[] printableMaze = new String[maze.length];
         char[] rowChars;
         //Make sure the final exit of the maze is not a wall
-        maze[maze.length-2][maze[0].length-1]= maze[maze.length-2][maze[0].length-2];
         for (int x = 0; x < maze.length; x++) {
-            rowChars = new char[maze[x].length];
-            for (int y = 0; y < maze[x].length; y++) {
-                if (maze[x][y])     {
-                    rowChars[y] = 'X';
-                } else {
-                    rowChars[y] = '0';
-                }
-            }
-            printableMaze[x] = new String(rowChars);
+            printableMaze[x] = new String(maze[x]).replaceAll("x",data.getWallString()).replaceAll("o",data.getEmptyString());
         }
         return printableMaze;
-    }
-    private static String[] printableMaze;
-    public static void setPrintableMaze(String[] printableMaze) {
-        backend.printableMaze = printableMaze;
-    }
-    public static String[] getPrintableMaze() {
-        return printableMaze;
-    }
-    private static String wallString;
-    public static void setWallString(String wallString) {
-        backend.wallString = wallString;
-    }
-    public static String getWallString() {
-        return wallString;
-    }
-    private static String emptyString;
-    public static void setEmptyString(String emptyString) {
-        backend.emptyString = emptyString;
-    }
-    public static String getEmptyString() {
-        return emptyString;
     }
 }
