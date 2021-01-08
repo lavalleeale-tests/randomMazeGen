@@ -1,13 +1,6 @@
 package com.axlav;
 
 public class data {
-    private static boolean[][] initialSolution;
-    public static void setInitialSolution(boolean[][] printableMaze) {
-        data.initialSolution = printableMaze;
-    }
-    public static boolean[][] getInitialSolution() {
-        return initialSolution;
-    }
     private static String wallString;
     public static void setWallString(String wallString) {
         data.wallString = wallString;
@@ -22,11 +15,16 @@ public class data {
     public static String getEmptyString() {
         return emptyString;
     }
-    private static String charMaze;
-    public static void setCharMaze(String charMaze) {
-        data.charMaze = charMaze;
+    private static int[] playerPos;
+    public static void setPlayerPos(int[] playerPos) {
+        data.playerPos = playerPos;
     }
-    public static String getCharMaze() {
-        return charMaze;
+    public static int[] getPlayerPos() {
+        return playerPos;
+    }
+    private static boolean[][] maze;
+    public static void setMaze(boolean[][] maze) {data.maze = maze;}
+    public static boolean[][] getMaze() {
+        return maze;
     }
 }

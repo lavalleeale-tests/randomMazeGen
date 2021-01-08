@@ -13,8 +13,8 @@ public class Main {
             }
         }
         boolean[][] maze = backend.genMaze(mazex, mazey);
-        data.setInitialSolution(backend.genInitialSolution(maze));
         GUI GUI = new GUI();
+        data.setMaze(backend.genInitialSolution(maze));
         GUI.start();
     }
 }

@@ -26,39 +26,39 @@ public class backend {
     public static boolean[][] genInitialSolution(boolean[][] maze){
         int curx = 1;
         int cury = 0;
-        int newSpotx;
-        int newSpoty;
+        int newSpotX;
+        int newSpotY;
 
         while (true) {
             Random r = new Random();
             int result = r.nextInt(4);
             switch (result) {
                 case 0:
-                    newSpotx = curx;
-                    newSpoty = cury+1;
+                    newSpotX = curx;
+                    newSpotY = cury+1;
                     break;
                 case 1:
-                    newSpotx = curx;
-                    newSpoty = cury-1;
+                    newSpotX = curx;
+                    newSpotY = cury-1;
                     break;
                 case 2:
-                    newSpotx = curx+1;
-                    newSpoty = cury;
+                    newSpotX = curx+1;
+                    newSpotY = cury;
                     break;
                 case 3:
-                    newSpotx = curx-1;
-                    newSpoty = cury;
+                    newSpotX = curx-1;
+                    newSpotY = cury;
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value");
             }
-            if (newSpotx == maze.length-2 && newSpoty == maze[0].length-1) {
+            if (newSpotX == maze.length-2 && newSpotY == maze[0].length-1) {
                 return maze;
             }
-            if(validSpot(maze, newSpotx, newSpoty)) {
-                maze[newSpotx][newSpoty] = false;
-                curx = newSpotx;
-                cury = newSpoty;
+            if(validSpot(maze, newSpotX, newSpotY)) {
+                maze[newSpotX][newSpotY] = false;
+                curx = newSpotX;
+                cury = newSpotY;
             }
         }
     }
@@ -186,7 +186,6 @@ public class backend {
     }
     public static String[] genPrintableMaze(char[][] maze) {
         String[] printableMaze = new String[maze.length];
-        char[] rowChars;
         //Make sure the final exit of the maze is not a wall
         for (int x = 0; x < maze.length; x++) {
             printableMaze[x] = new String(maze[x]).replaceAll("x",data.getWallString()).replaceAll("o",data.getEmptyString());
