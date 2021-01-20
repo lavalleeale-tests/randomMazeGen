@@ -1,5 +1,6 @@
 package com.axlav;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -21,15 +22,23 @@ public class backend {
     }
     /**
      * Generates and set to <code>false</code> a path to solve any given <code>boolean[][]</code> maze
-     * @param maze The maze to generate the solution from
+     * @param maze The mxaze to generate the solution from
      **/
     public static boolean[][] genInitialSolution(boolean[][] maze){
+        long startTime =  System.currentTimeMillis();
         int curx = 1;
         int cury = 0;
         int newSpotX;
         int newSpotY;
 
         while (true) {
+            if (System.currentTimeMillis()>startTime+5000) {
+                startTime =  System.currentTimeMillis();
+                curx = 1;
+                cury = 0;
+                maze = backend.genMaze(maze.length-1,maze[0].length-1);
+                System.out.println("reset");
+            }
             Random r = new Random();
             int result = r.nextInt(4);
             switch (result) {
@@ -69,22 +78,24 @@ public class backend {
      * @param y The y value of the initial point
      **/
     public static boolean validSpot(boolean[][] maze, int x, int y) {
-        Object[][] tried = new Object[0][0];
-        Object[][] toTry = new Object[][]{{x, y, maze.clone()}};
         int curx;
         int cury;
         boolean[][] curMaze;
         boolean[][] newMaze;
+        ArrayList<Object[]> toTry = new ArrayList<>();
+        ArrayList<Object[]> tried = new ArrayList<>();
+        toTry.add(new Object[]{x,y,maze.clone()});
         whileLoop:
         while (true) {
             //Check if no points left to try
-            if (toTry.length==0) {
+            if (toTry.size()==0) {
                 return false;
             }
             //Assign current position and maze
-            curx = (Integer)toTry[toTry.length-1][0];
-            cury = (Integer)toTry[toTry.length-1][1];
-            curMaze = (boolean[][])toTry[toTry.length-1][2];
+            curx = (int) toTry.get(toTry.size()-1)[0];
+            cury = (int) toTry.get(toTry.size()-1)[1];
+            curMaze = (boolean[][]) toTry.get(toTry.size()-1)[2];
+
             //Check if current points have already been
             for (Object[] point : tried) {
                 if (Arrays.equals(point, new Object[]{curx, cury, curMaze})) {
@@ -92,24 +103,18 @@ public class backend {
                 }
             }
             //Append current point to array of tried points
-            tried = Arrays.copyOf(tried, tried.length+1);
-            tried[tried.length-1] = new Object[]{curx, cury, curMaze};
+            tried.add(new Object[]{curx, cury, curMaze});
             //Check if there is too long a backlog of points
-            if (tried.length> maze.length*maze[0].length/5) {
-                tried = new Object[0][0];
-                toTry = new Object[][]{{x, y, maze.clone()}};
+            if (tried.size()> maze.length*maze[0].length/5) {
+                toTry = new ArrayList<>();
+                tried = new ArrayList<>();
+                toTry.add(new Object[]{x,y,maze.clone()});
             }
             //Check if the current position is the final point
             if (curx == maze.length-2 && cury == maze[0].length-1) {
-                System.out.printf("got: %s,%s tried:%s\n", x, y,tried.length);
                 return true;
             }
-            //Remove current points from array of positions try
-            Object[][] copy = new Object[toTry.length - 1][];
-            for (int i = 0, j = 0; i < toTry.length-1; i++) {
-                copy[j++] = toTry[i];
-            }
-            toTry = copy;
+            toTry.remove(toTry.size()-1);
 
             //Check if the current spot does not intersect with other paths
             if (!validSingleSpot(curx,cury,curMaze)) {
@@ -123,11 +128,10 @@ public class backend {
             //Remove wall from current point
             newMaze[curx][cury] = false;
             //Add new points to array of points to try
-            toTry = Arrays.copyOf(toTry,toTry.length+4);
-            toTry[toTry.length-3] = new Object[]{curx-1, cury, newMaze};
-            toTry[toTry.length-4] = new Object[]{curx, cury-1, newMaze};
-            toTry[toTry.length-2] = new Object[]{curx+1, cury, newMaze};
-            toTry[toTry.length-1] = new Object[]{curx, cury+1, newMaze};
+            toTry.add(new Object[]{curx, cury-1, newMaze});
+            toTry.add(new Object[]{curx-1, cury, newMaze});
+            toTry.add(new Object[]{curx, cury+1, newMaze});
+            toTry.add(new Object[]{curx+1, cury, newMaze});
         }
     }
     /**
