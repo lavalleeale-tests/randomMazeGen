@@ -14,6 +14,8 @@ jobs:
           java-version: 1.8
       - name: Build with Maven
         run: mvn clean compile assembly:single -q
+      - name: Test jar
+        run: java -cp target/randomMazeGen.jar com.axlav.Debug
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
