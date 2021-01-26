@@ -4,27 +4,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class backend {
+public class Maze {
+    public boolean[][] publicMaze;
+    public int[] playerPos;
+    public String wallString;
+    public String emptyString;
     /**
      * Generates a <code>boolean[][]</code> with specified dimensions
     * @param x The height of the maze to be generated
     * @param y The width of the maze to be generated
     **/
-    public static boolean[][] genMaze(int x, int y){
-        boolean[][] maze = new boolean[x][y];
+    public void generate(int x, int y){
+        boolean[][] generatedMaze = new boolean[x][y];
         for (int row = 0; row < x; row++) {
             for (int column = 0; column < y; column++) {
-                maze[row][column] = true;
+                generatedMaze[row][column] = true;
             }
         }
-        maze[1][0] = false;
-        return maze;
+        generatedMaze[1][0] = false;
+        this.publicMaze = generatedMaze;
     }
     /**
      * Generates and set to <code>false</code> a path to solve any given <code>boolean[][]</code> maze
-     * @param maze The mxaze to generate the solution from
      **/
-    public static boolean[][] genInitialSolution(boolean[][] maze){
+    public void genInitialSolution(){
         long startTime =  System.currentTimeMillis();
         int curx = 1;
         int cury = 0;
@@ -36,7 +39,7 @@ public class backend {
                 startTime =  System.currentTimeMillis();
                 curx = 1;
                 cury = 0;
-                maze = backend.genMaze(maze.length-1,maze[0].length-1);
+                this.generate(this.publicMaze.length-1,this.publicMaze[0].length-1);
                 System.out.println("reset");
             }
             Random r = new Random();
@@ -61,11 +64,11 @@ public class backend {
                 default:
                     throw new IllegalStateException("Unexpected value");
             }
-            if (newSpotX == maze.length-2 && newSpotY == maze[0].length-1) {
-                return maze;
+            if (newSpotX == this.publicMaze.length-2 && newSpotY == this.publicMaze[0].length-1) {
+                return;
             }
-            if(validSpot(maze, newSpotX, newSpotY)) {
-                maze[newSpotX][newSpotY] = false;
+            if(validSpot(this.publicMaze, newSpotX, newSpotY)) {
+                this.publicMaze[newSpotX][newSpotY] = false;
                 curx = newSpotX;
                 cury = newSpotY;
             }
@@ -77,7 +80,7 @@ public class backend {
      * @param x The x value of the initial point
      * @param y The y value of the initial point
      **/
-    public static boolean validSpot(boolean[][] maze, int x, int y) {
+    public boolean validSpot(boolean[][] maze, int x, int y) {
         int curx;
         int cury;
         boolean[][] curMaze;
@@ -140,7 +143,7 @@ public class backend {
      * @param x The x value of the initial point
      * @param y The y value of the initial point
      **/
-    public static boolean validSingleSpot(int x, int y, boolean[][] maze) {
+    public boolean validSingleSpot(int x, int y, boolean[][] maze) {
         int emptyAdjacent = 0;
         try {
             if (!maze[x][y]) {
@@ -166,10 +169,10 @@ public class backend {
     }
     /**
      * Takes a <code>boolean[][]</code> maze and outputs a <code>String[]</code> representation
-     * @param maze The maze to make printable
      * @return The <code>String[]</code> representation
      **/
-    public static char[][] genCharMaze(boolean[][] maze, int playerX, int playerY) {
+    public char[][] genCharMaze(int playerX, int playerY) {
+        boolean[][] maze = this.publicMaze;
         char[][] charMaze = new char[maze.length][];
         char[] rowChars;
         maze[maze.length-2][maze[0].length-1]= maze[maze.length-2][maze[0].length-2];
@@ -188,11 +191,11 @@ public class backend {
         charMaze[playerX][playerY] = 'X';
         return charMaze;
     }
-    public static String[] genPrintableMaze(char[][] maze) {
+    public String[] printableMaze(char[][] maze) {
         String[] printableMaze = new String[maze.length];
         //Make sure the final exit of the maze is not a wall
         for (int x = 0; x < maze.length; x++) {
-            printableMaze[x] = new String(maze[x]).replaceAll("x",data.getWallString()).replaceAll("o",data.getEmptyString());
+            printableMaze[x] = new String(maze[x]).replaceAll("x",this.wallString).replaceAll("o",this.emptyString);
         }
         return printableMaze;
     }

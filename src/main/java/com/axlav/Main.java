@@ -12,9 +12,10 @@ public class Main {
                 System.err.println("Failed trying to parse a non-numeric argument");
             }
         }
-        boolean[][] maze = backend.genMaze(mazex, mazey);
+        Maze maze = new Maze();
+        maze.generate(mazex, mazey);
+        maze.genInitialSolution();
         GUI GUI = new GUI();
-        data.setMaze(backend.genInitialSolution(maze));
-        GUI.start();
+        GUI.start(maze);
     }
 }

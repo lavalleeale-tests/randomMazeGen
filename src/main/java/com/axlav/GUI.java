@@ -11,19 +11,20 @@ import java.awt.event.WindowEvent;
 public class GUI extends JPanel implements KeyListener {
     private long wrongTime = System.currentTimeMillis();
     private final JTextPane textPane = new JTextPane();
-    public void start() {
-        JFrame frame = new JFrame("Maze");
+    private Maze maze;
+    public void start(Maze maze) {
+        this.maze = maze;
+        setWalls();
         textPane.setEditable(false);
-        boolean[][] maze = data.getMaze();
+        textPane.addKeyListener(this);
+        updateMaze(textPane, maze.publicMaze, 1, 0);
+        JFrame frame = new JFrame("Maze");
+        frame.getContentPane().add(textPane);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
         });
-        textPane.addKeyListener(this);
-        frame.getContentPane().add(textPane);
-        setWalls();
-        updateMaze(textPane, maze, 1, 0);
         frame.pack();
         frame.setVisible(true);
     }
@@ -42,9 +43,9 @@ public class GUI extends JPanel implements KeyListener {
                     doc.insertString(doc.getLength(), s, doc.getStyle("regular"));
                 }
                 if (hitWall) {
-                    doc.setCharacterAttributes((text[0].length() * data.getPlayerPos()[0]) + data.getPlayerPos()[1] * 2, 1, red, true);
+                    doc.setCharacterAttributes((text[0].length() * this.maze.playerPos[0]) + this.maze.playerPos[1] * 2, 1, red, true);
                 } else if (finished) {
-                    doc.setCharacterAttributes((text[0].length() * data.getPlayerPos()[0]) + data.getPlayerPos()[1] * 2, 1, green, true);
+                    doc.setCharacterAttributes((text[0].length() * this.maze.playerPos[0]) + this.maze.playerPos[1] * 2, 1, green, true);
                 }
             textPane.setDocument(doc);
         } catch (BadLocationException ble) {
@@ -55,12 +56,12 @@ public class GUI extends JPanel implements KeyListener {
         JTextPane dummyWallsPane = new JTextPane();
         JTextPane dummyEmptyPane = new JTextPane();
         for (String walls: new String[]{"{}","[]"}) {
-            data.setWallString(walls);
+            this.maze.wallString =walls;
             for (int i = 1; i < 10; i++) {
                 dummyWallsPane.setText(walls);
                 dummyEmptyPane.setText(new String(new char[i]).replace("\0", " "));
                 if (dummyWallsPane.getPreferredSize().width==dummyEmptyPane.getPreferredSize().width) {
-                    data.setEmptyString(new String(new char[i]).replace("\0", " "));
+                    this.maze.emptyString = new String(new char[i]).replace("\0", " ");
                 }
             }
         }
@@ -70,11 +71,11 @@ public class GUI extends JPanel implements KeyListener {
         boolean finished = false;
         try {
             if (!maze[playerX][playerY]) {
-                data.setPlayerPos(new int[]{playerX, playerY});
+                this.maze.playerPos = new int[]{playerX, playerY};
                 hitWall = false;
             }
-            char[][] charMaze = backend.genCharMaze(maze, data.getPlayerPos()[0], data.getPlayerPos()[1]);
-            String[] printableMaze = backend.genPrintableMaze(charMaze);
+            char[][] charMaze = this.maze.genCharMaze(this.maze.playerPos[0], this.maze.playerPos[1]);
+            String[] printableMaze = this.maze.printableMaze(charMaze);
             if (playerX == maze.length-2 && playerY == maze[0].length-1) {
                 finished = true;
             }
@@ -90,16 +91,16 @@ public class GUI extends JPanel implements KeyListener {
         if (wrongTime<System.currentTimeMillis()-500) {
             switch (key.getKeyChar()) {
                 case 'w':
-                    updateMaze(textPane, data.getMaze(), data.getPlayerPos()[0]-1, data.getPlayerPos()[1]);
+                    updateMaze(textPane, this.maze.publicMaze, this.maze.playerPos[0]-1, this.maze.playerPos[1]);
                     break;
                 case 'a':
-                    updateMaze(textPane, data.getMaze(), data.getPlayerPos()[0], data.getPlayerPos()[1]-1);
+                    updateMaze(textPane, this.maze.publicMaze, this.maze.playerPos[0], this.maze.playerPos[1]-1);
                     break;
                 case 's':
-                    updateMaze(textPane, data.getMaze(), data.getPlayerPos()[0]+1, data.getPlayerPos()[1]);
+                    updateMaze(textPane, this.maze.publicMaze, this.maze.playerPos[0]+1, this.maze.playerPos[1]);
                     break;
                 case 'd':
-                    updateMaze(textPane, data.getMaze(), data.getPlayerPos()[0], data.getPlayerPos()[1]+1);
+                    updateMaze(textPane, this.maze.publicMaze, this.maze.playerPos[0], this.maze.playerPos[1]+1);
                     break;
                 default:
             }
